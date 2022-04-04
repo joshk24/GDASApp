@@ -27,20 +27,35 @@ fi
 
 #  Directories
 pwd=$(pwd)
+export HOMEgdas=${HOMEgdas:-"$HOMEgfs/sorc/gdasapp.fd/"}
 
 #  Utilities
 export NLN=${NLN:-"/bin/ln -sf"}
-export INCPY=${INCPY:-"$HOMEgfs/sorc/gdasapp.fd/ush/jediinc2fv3.py"}
+export INCPY=${INCPY:-"$HOMEgdas/ush/jediinc2fv3.py"}
+export GENYAML=${GENYAML:-"$HOMEgdas/ush/genYAML"}
 
 ################################################################################
 #  Link COMOUT/analysis to $DATA/Data
 $NLN $COMOUT/analysis $DATA/Data
 
-#  Link YAML to $DATA
-$NLN $COMOUT/analysis/fv3jedi_var.yaml $DATA/fv3jedi_var.yaml
-
 #  Link executable to $DATA
 $NLN $JEDIVAREXE $DATA/fv3jedi_var.x
+
+################################################################################
+# generate YAML from template and environment
+# below line is temporary until the python utilities are installed properly
+export PYTHONPATH=$HOMEgdas/ush:$PYTHONPATH
+# create high level input YAML on the fly
+cat > $DATA/${CDATE}_config.yaml << EOF
+template: $HOMEgdas/parm/atm/variational/3dvar_dripcg.yaml
+output: $DATA/fv3jedi_var.yaml
+config:
+  paths: $<< ${HOMEgdas}/parm/atm/common/paths.yaml
+  atm_case: ${HOMEgdas}/parm/atm/common/${CASE}.yaml
+EOF
+
+# pass temp YAML to utility to create full YAML
+$GENYAML --config $DATA/${CDATE}_config.yaml
 
 ################################################################################
 # run executable

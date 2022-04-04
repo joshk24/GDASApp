@@ -25,7 +25,7 @@ import sys
 # get absolute path of ush/ directory either from env or relative to this file
 my_dir = os.path.dirname(__file__)
 my_home = os.path.dirname(os.path.dirname(my_dir))
-ufsda_home = os.path.join(os.environ['HOMEgfs'], 'sorc', 'ufs_da.fd', 'UFS-DA')
+ufsda_home = os.path.join(os.environ['HOMEgfs'], 'sorc', 'gdasapp.fd')
 sys.path.append(os.path.join(os.getenv('HOMEgfs', my_home), 'ush'))
 print(f"sys.path={sys.path}")
 
@@ -58,12 +58,3 @@ ufsda.stage.berror(stage_cfg)
 
 # stage additional needed files
 ufsda.stage.fv3jedi(stage_cfg)
-
-# generate YAML file for fv3jedi_var
-var_yaml = os.path.join(anl_dir, 'fv3jedi_var.yaml')
-yaml_template = os.getenv('ATMANALYAML',
-                          os.path.join(ufsda_home,
-                                       'parm',
-                                       'templates',
-                                       'ufsda_global_atm_3dvar.yaml'))
-ufsda.gen_yaml(var_yaml, yaml_template)

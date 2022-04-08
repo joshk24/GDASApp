@@ -40,7 +40,7 @@ echo "---------------------------------------------------" >> $outfile
 # run build script
 cd $repodir
 module purge
-./build.sh -t $TARGET &>> log.build
+./build.sh -r -t $TARGET &>> log.build
 build_status=$?
 if [ $build_status -eq 0 ]; then
   echo "Build:                                 *SUCCESS*" >> $outfile

@@ -3,6 +3,8 @@
 # tests that require the full build
 if(BUILD_GDASBUNDLE)
 
+  # unit tests
+  # ------------------------------------------------------------------------------------------------------------------------
   # link input file from iodaconv to test directory
   file(CREATE_LINK ${PROJECT_SOURCE_DIR}/iodaconv/test/testinput/gdas.t06z.adpsfc.tm00.bufr_d ${PROJECT_BINARY_DIR}/test/testdata/gdas.t06z.adpsfc.tm00.bufr_d SYMBOLIC)
   # test convert BUFR to IODA
@@ -25,4 +27,17 @@ if(BUILD_GDASBUNDLE)
           ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/ush:$ENV{PYTHONPATH}"
   )
 
+  if(DEFINED BASELINE_ROOT)
+    # regression tests
+    # ------------------------------------------------------------------------------------------------------------------------
+    # the regression tests need large files for input/output and require -DBASELINE_ROOT set at cmake execution time
+    # atm 3DVar test at C96 background with C48 analysis/increment out
+    add_test(NAME regression_gdasapp_atm_3dvar
+             COMMAND ${PROJECT_SOURCE_DIR}/test/atm/regtest_3dvar.sh
+             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/test/)
+    set_tests_properties(regression_gdasapp_atm_3dvar
+        PROPERTIES
+            ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/ush:$ENV{PYTHONPATH}"
+    )
+  endif
 endif(BUILD_GDASBUNDLE)

@@ -19,6 +19,7 @@ usage() {
   echo "  -t  target to build for <target>    DEFAULT: $(hostname)"
   echo "  -c  additional CMake options        DEFAULT: <none>"
   echo "  -v  build with verbose output       DEFAULT: NO"
+  echo "  -r  include regression tests        DEFAULT: NO"
   echo "  -h  display this message and quit"
   echo
   exit 1
@@ -31,6 +32,7 @@ INSTALL_PREFIX=""
 CMAKE_OPTS=""
 BUILD_TARGET="$(hostname)"
 BUILD_VERBOSE="NO"
+BUILD_REGTESTS="NO"
 
 while getopts "p:t:c:hv" opt; do
   case $opt in
@@ -45,6 +47,9 @@ while getopts "p:t:c:hv" opt; do
       ;;
     v)
       BUILD_VERBOSE=YES
+      ;;
+    r)
+      BUILD_REGTESTS="YES"
       ;;
     h|\?|:)
       usage
@@ -76,6 +81,12 @@ mkdir -p ${BUILD_DIR} && cd ${BUILD_DIR}
 
 # If INSTALL_PREFIX is not empty; install at INSTALL_PREFIX
 [[ -n "${INSTALL_PREFIX:-}" ]] && CMAKE_OPTS+=" -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}"
+
+# if BUILD_REGTESTS==YES, include the required path in CMAKE_OPTS
+if [ ${BUILD_REGTESTS} == "YES" ]; then
+  CMAKE_OPTS+=" -DBASELINE_ROOT=${BASELINE_ROOT}"
+fi
+
 
 # Configure
 echo "Configuring ..."

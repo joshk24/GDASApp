@@ -54,6 +54,7 @@ setenv('MPIEXEC_EXEC', mpiexec)
 setenv('MPIEXEC_NPROC', mpinproc)
 
 setenv('R2D2_CONFIG', '/work2/noaa/da/cmartin/GDASApp/R2D2_SHARED/config_orion.yaml')
+setenv('BASELINE_ROOT', '/work2/noaa/da/cmartin/GDASApp/baselines/')
 
 execute{cmd="ulimit -s unlimited",modeA={"load"}}
 

@@ -1,12 +1,12 @@
 #!/bin/bash
 dataroot=/work2/noaa/da/cmartin/UFO_eval/data/aug2021_ufo_eval
 iodaconv="NO"
-satbiasconv="YES"
+satbiasconv="NO"
 r2d2store_obs="NO"
-r2d2store_bc="YES"
-r2d2store_bkg="NO"
-startdate=2021080100
-enddate=2021080718
+r2d2store_bc="NO"
+r2d2store_bkg="YES"
+startdate=2021080106
+enddate=2021080712
 dump="gdas"
 HOMEgdas=/work2/noaa/da/cmartin/GDASApp/work/GDASApp
 machine="orion"
@@ -255,6 +255,10 @@ EOF
 fi
 
 if [ $r2d2store_bkg = "YES" ]; then
+  nowpdy=${startdate::8}; nowcyc=${startdate:8}
+  firstdate=$(date -d "$nowpdy $nowcyc" +%Y-%m-%dT%H)
+  nowpdy=${enddate::8}; nowcyc=${enddate:8}
+  lastdate=$(date -d "$nowpdy $nowcyc" +%Y-%m-%dT%H)
   cat > $dataroot/r2d2_store_bkg.yaml << EOF
 start: ${firstdate}:00:00Z
 end: ${lastdate}:00:00Z
@@ -262,7 +266,7 @@ step: PT6H
 forecast_steps: [PT3H, PT4H, PT5H, PT6H, PT7H, PT8H, PT9H]
 file_type_list: ['fv_core.res', 'fv_srf_wnd.res', 'fv_tracer.res', 'phy_data', 'sfc_data']
 source_dir: $dataroot
-source_file_fmt: '{source_dir}/{dump}.{year}{month}{day}/{hour}/atmos/RESTART/$(valid_date).$(file_type).tile$(tile).nc'
+source_file_fmt: '{source_dir}/{dump}.{year}{month}{day}/{hour}/atmos/RESTART/\$(valid_date).\$(file_type).tile\$(tile).nc'
 type: fc
 model: gfs
 resolution: c768
@@ -281,7 +285,7 @@ step: PT6H
 forecast_steps: [PT3H, PT4H, PT5H, PT6H, PT7H, PT8H, PT9H]
 file_type_list: ['fv_core.res.nc', 'coupler.res']
 source_dir: $dataroot
-source_file_fmt: '{source_dir}/{dump}.{year}{month}{day}/{hour}/atmos/RESTART/$(valid_date).$(file_type)'
+source_file_fmt: '{source_dir}/{dump}.{year}{month}{day}/{hour}/atmos/RESTART/\$(valid_date).\$(file_type)'
 type: fc
 model: gfs_metadata
 resolution: c768
